@@ -7,12 +7,14 @@ RUN apt-get update && \
 		libapparmor1 \
 		libedit2 \
 		lsb-release \
+		psmisc \
+		libssl1.0-dev \
 		;
 
 # You can use rsession from rstudio's desktop package as well.
-ENV RSTUDIO_PKG=rstudio-server-1.0.136-amd64.deb
+ENV RSTUDIO_PKG=rstudio-server-latest-amd64.deb
 
-RUN wget -q http://download2.rstudio.org/${RSTUDIO_PKG}
+RUN wget -q http://www.rstudio.org/download/latest/stable/server/ubuntu64/${RSTUDIO_PKG}
 RUN dpkg -i ${RSTUDIO_PKG}
 RUN rm ${RSTUDIO_PKG}
 
@@ -20,6 +22,9 @@ RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 USER $NB_USER
+#RUN \
+#  echo "www-frame-origin=app.dominodatalab.com" >> /etc/rstudio/rserver.conf && \
+#  chown ubuntu:ubuntu /etc/rstudio
 
 RUN pip install git+https://github.com/jupyterhub/nbserverproxy.git
 RUN jupyter serverextension enable --sys-prefix --py nbserverproxy
